@@ -42,6 +42,7 @@ simple EtherHub
         @display("i=device/hub");
         @signal[packetReceived](type=cMessage);
         @statistic[packetReceived](title="packets"; source=packetReceived; record=count,"sum(packetBytes)","vector(packetBytes)"; interpolationmode=none);
+        double bitrate @unit(bps) = default(0 bps);
     gates:
         inout ethg[] @labels(EtherFrame-conn);  // to stations; each one represents a port
 }

@@ -143,7 +143,7 @@ void EtherBus::initialize()
 void EtherBus::checkConnections(bool errorWhenAsymmetric)
 {
     int numActiveTaps = 0;
-    datarate = 0.0;
+    datarate = par("bitrate");
     dataratesDiffer = false;
 
     for (int i = 0; i < numTaps; i++) {
@@ -162,30 +162,35 @@ void EtherBus::checkConnections(bool errorWhenAsymmetric)
         }
 
         numActiveTaps++;
-        double drate = igate->getIncomingTransmissionChannel()->getNominalDatarate();
+        double drateIn = igate->getIncomingTransmissionChannel()->getNominalDatarate();
+        cChannel *outTrChannel = ogate->getTransmissionChannel();
+        double drateOut = outTrChannel->getNominalDatarate();
 
-        if (numActiveTaps == 1)
-            datarate = drate;
-        else if (datarate != drate) {
+        if (drateIn != drateOut) {
             if (errorWhenAsymmetric)
-                throw cRuntimeError("The input datarate at tap %i differs from datarates of previous taps", i);
+                throw cRuntimeError("The input datarate at tap %i differs from output datarate", i);
             dataratesDiffer = true;
             EV << "The input datarate at tap " << i << " differs from datarates of previous taps.\n";
+            continue;
         }
 
-        cChannel *outTrChannel = ogate->getTransmissionChannel();
-        drate = outTrChannel->getNominalDatarate();
+        if (datarate == 0.0)
+            datarate = drateOut;
 
-        if (datarate != drate) {
+        if (datarate != drateOut && drateOut != 0.0) {
             if (errorWhenAsymmetric)
-                throw cRuntimeError("The output datarate at tap %i differs from datarates of previous taps", i);
+                throw cRuntimeError("The datarate at tap %i differs from datarates of previous taps", i);
             dataratesDiffer = true;
-            EV << "The output datarate at tap " << i << " differs from datarates of previous taps.\n";
+            EV << "The datarate at tap " << i << " differs from datarates of previous taps.\n";
+            continue;
         }
 
         if (!outTrChannel->isSubscribed(POST_MODEL_CHANGE, this))
             outTrChannel->subscribe(POST_MODEL_CHANGE, this);
     }
+
+    if (!errorWhenAsymmetric && dataratesDiffer && datarate == 0.0)
+        throw cRuntimeError("The datarate unspecified");
 }
 
 void EtherBus::receiveSignal(cComponent *source, simsignal_t signalID, cObject *obj, cObject *details)
