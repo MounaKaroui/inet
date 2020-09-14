@@ -25,6 +25,7 @@
 #include "inet/common/ProtocolTag_m.h"
 #include "inet/linklayer/common/Ieee802Ctrl.h"
 #include "inet/linklayer/common/InterfaceTag_m.h"
+#include "inet/linklayer/common/MacAddressTag_m.h"
 #include "inet/linklayer/ethernet/EtherEncap.h"
 #include "inet/linklayer/ethernet/EtherFrame_m.h"
 #include "inet/linklayer/ethernet/EtherMac.h"
@@ -767,6 +768,9 @@ void EtherMac::frameReceptionComplete(EthernetSignalBase *signal)
     }
 
     const auto& frame = packet->peekAtFront<EthernetMacHeader>();
+    auto macAddressInd = packet->addTag<MacAddressInd>();
+    macAddressInd->setSrcAddress(frame->getSrc());
+    macAddressInd->setDestAddress(frame->getDest());
     if (dropFrameNotForUs(packet, frame))
         return;
 
