@@ -39,6 +39,7 @@ class INET_API EtherHub : public cSimpleModule, protected cListener
         long incomingOrigId = -1;
         long outgoingOrigId = -1;
         simtime_t outgoingStartTime;
+        double outgoingBitrate = NaN;
         bool outgoingCollision = false;
     };
   protected:
@@ -48,7 +49,6 @@ class INET_API EtherHub : public cSimpleModule, protected cListener
     int inputGateBaseId;    // gate id of ethg$i[0]
     int outputGateBaseId;    // gate id of ethg$o[0]
     bool dataratesDiffer;
-    double datarate = 0;
 
     // statistics
     long numMessages;    // number of messages handled

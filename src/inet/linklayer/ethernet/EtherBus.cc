@@ -143,7 +143,7 @@ void EtherBus::initialize()
 void EtherBus::checkConnections(bool errorWhenAsymmetric)
 {
     int numActiveTaps = 0;
-    datarate = 0.0;
+    double datarate = 0.0;
     dataratesDiffer = false;
 
     for (int i = 0; i < numTaps; i++) {
@@ -401,6 +401,7 @@ EthernetSignalBase *EtherBus::mergeSignals(int tapIdx)
             if (t > endTime)
                 endTime = t;
         }
+        double datarate = tap[tapIdx].outgoingSignals.begin()->second->getBitrate();
         signal->setArrivalTime(now);
         signal->setDuration(endTime - startTime);
         signal->setRemainingDuration(endTime - now);
@@ -422,7 +423,7 @@ void EtherBus::cutSignalEnd(EthernetSignalBase* signal, simtime_t duration)
 {
     signal->setRemainingDuration(signal->getArrivalTime() + duration - simTime());
     signal->setDuration(duration);
-    int64_t newBitLength = duration.dbl() * datarate;
+    int64_t newBitLength = duration.dbl() * signal->getBitrate();
     if (auto packet = check_and_cast_nullable<Packet*>(signal->decapsulate())) {
         //TODO: removed length calculation based on the PHY layer (parallel bits, bit order, etc.)
         if (newBitLength < packet->getBitLength()) {

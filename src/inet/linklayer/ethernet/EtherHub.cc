@@ -71,7 +71,7 @@ void EtherHub::initialize()
 void EtherHub::checkConnections(bool errorWhenAsymmetric)
 {
     int numActivePorts = 0;
-    datarate = 0.0;
+    double datarate = 0.0;
     dataratesDiffer = false;
 
     for (int i = 0; i < numPorts; i++) {
@@ -214,7 +214,7 @@ void EtherHub::handleMessage(cMessage *msg)
 void EtherHub::cutSignalEnd(EthernetSignalBase* signal, simtime_t duration)
 {
     signal->setDuration(duration);
-    int64_t newBitLength = duration.dbl() * datarate;
+    int64_t newBitLength = duration.dbl() * signal->getBitrate();
     if (auto packet = check_and_cast_nullable<Packet*>(signal->decapsulate())) {
         //TODO: removed length calculation based on the PHY layer (parallel bits, bit order, etc.)
         if (newBitLength < packet->getBitLength()) {
@@ -260,6 +260,7 @@ void EtherHub::forwardSignalFrom(int arrivalPort)
                 portInfos[outPort].forwardFromPorts.insert(arrivalPort);
                 portInfos[outPort].outgoingOrigId = signalCopy->getId();
                 portInfos[outPort].outgoingStartTime = now;
+                portInfos[outPort].outgoingBitrate = signalCopy->getBitrate();
                 portInfos[outPort].outgoingCollision = false;
                 send(signalCopy, SendOptions().duration(signal->getDuration()), ogate);
             }
@@ -285,8 +286,8 @@ void EtherHub::forwardSignalFrom(int arrivalPort)
                         // send when not signalEnd, or signalEnd and doesn't have any other signal (signal end send only when the all end arrived)
                         simtime_t duration = newEnd - portInfos[outPort].outgoingStartTime;
                         EthernetSignalBase *signalCopy = new EthernetSignalBase("collision");
-                        signalCopy->setBitLength(duration.dbl() * datarate);
-                        signalCopy->setBitrate(datarate);
+                        signalCopy->setBitLength(duration.dbl() * portInfos[outPort].outgoingBitrate);
+                        signalCopy->setBitrate(portInfos[outPort].outgoingBitrate);
                         signalCopy->setBitError(true);
                         send(signalCopy, SendOptions().updateTx(portInfos[outPort].outgoingOrigId).duration(duration), ogate);
                     }
@@ -299,6 +300,7 @@ void EtherHub::forwardSignalFrom(int arrivalPort)
                     portInfos[outPort].outgoingOrigId = -1;
                     portInfos[outPort].outgoingStartTime = now;
                     portInfos[outPort].outgoingCollision = false;
+                    portInfos[outPort].outgoingBitrate = NaN;
                 }
             }
         }
@@ -322,8 +324,8 @@ void EtherHub::cutActiveTxOnPort(int outPort)
     simtime_t duration = now - portInfos[outPort].outgoingStartTime;
     EthernetSignalBase *signalCopy = nullptr;
     if (!portInfos[outPort].outgoingCollision && portInfos[outPort].forwardFromPorts.size() == 1) {
-        // cut a single transmission:
         int arrivalPort = *(portInfos[outPort].forwardFromPorts.begin());
+        // cut a single transmission:
         ASSERT(ogate->getTransmissionChannel()->isBusy());
         signalCopy = portInfos[arrivalPort].incomingSignal->dup();
         cutSignalEnd(signalCopy, duration);
@@ -333,10 +335,10 @@ void EtherHub::cutActiveTxOnPort(int outPort)
         ASSERT(ogate->getTransmissionChannel()->isBusy());
         ASSERT(portInfos[outPort].outgoingCollision);
         signalCopy = new EthernetSignalBase("collision");
-        int64_t newBitLength = duration.dbl() * datarate;
+        int64_t newBitLength = duration.dbl() * portInfos[outPort].outgoingBitrate;
         signalCopy->setBitLength(newBitLength);
+        signalCopy->setBitrate(portInfos[outPort].outgoingBitrate);
     }
-    signalCopy->setBitrate(datarate);
     signalCopy->setBitError(true);
     send(signalCopy, SendOptions().updateTx(portInfos[outPort].outgoingOrigId).duration(duration), ogate);
     // transmisssion finished
@@ -368,9 +370,10 @@ void EtherHub::copyIncomingsToPort(int outPort)
         simtime_t duration = newEnd - now;
         portInfos[outPort].outgoingStartTime = now;
         portInfos[outPort].outgoingCollision = true;
+        portInfos[outPort].outgoingBitrate = portInfos[*portInfos[outPort].forwardFromPorts.begin()].incomingSignal->getBitrate();
         portInfos[outPort].outgoingOrigId = signalCopy->getId();
-        signalCopy->setBitLength(duration.dbl() * datarate);
-        signalCopy->setBitrate(datarate);
+        signalCopy->setBitLength(duration.dbl() * portInfos[outPort].outgoingBitrate);
+        signalCopy->setBitrate(portInfos[outPort].outgoingBitrate);
         signalCopy->setBitError(true);
         send(signalCopy, SendOptions().duration(duration), ogate);
     }

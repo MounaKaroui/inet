@@ -55,7 +55,6 @@ class INET_API EtherBus : public cSimpleModule, cListener
     int outputGateBaseId = -1;    // gate id of ethg$o[0]
 
     // state
-    double datarate = 0;
     bool dataratesDiffer = false;
 
     // statistics
