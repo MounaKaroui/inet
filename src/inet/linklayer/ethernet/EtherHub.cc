@@ -71,7 +71,7 @@ void EtherHub::initialize()
 void EtherHub::checkConnections(bool errorWhenAsymmetric)
 {
     int numActivePorts = 0;
-    datarate = par("bitrate");
+    datarate = 0.0;
     dataratesDiffer = false;
 
     for (int i = 0; i < numPorts; i++) {
@@ -90,35 +90,30 @@ void EtherHub::checkConnections(bool errorWhenAsymmetric)
         }
 
         numActivePorts++;
-        double drateIn = igate->getIncomingTransmissionChannel()->getNominalDatarate();
-        cChannel *outTrChannel = ogate->getTransmissionChannel();
-        double drateOut = outTrChannel->getNominalDatarate();
+        double drate = igate->getIncomingTransmissionChannel()->getNominalDatarate();
 
-        if (drateIn != drateOut) {
+        if (numActivePorts == 1)
+            datarate = drate;
+        else if (datarate != drate) {
             if (errorWhenAsymmetric)
-                throw cRuntimeError("The input datarate at port %i differs from output datarate", i);
+                throw cRuntimeError("The input datarate at port %i differs from datarates of previous ports", i);
             dataratesDiffer = true;
             EV << "The input datarate at port " << i << " differs from datarates of previous ports.\n";
-            continue;
         }
 
-        if (datarate == 0.0)
-            datarate = drateOut;
+        cChannel *outTrChannel = ogate->getTransmissionChannel();
+        drate = outTrChannel->getNominalDatarate();
 
-        if (datarate != drateOut && drateOut != 0.0) {
+        if (datarate != drate) {
             if (errorWhenAsymmetric)
-                throw cRuntimeError("The datarate at port %i differs from datarates of previous ports", i);
+                throw cRuntimeError("The output datarate at port %i differs from datarates of previous ports", i);
             dataratesDiffer = true;
-            EV << "The datarate at port " << i << " differs from datarates of previous ports.\n";
-            continue;
+            EV << "The output datarate at port " << i << " differs from datarates of previous ports.\n";
         }
 
         if (!outTrChannel->isSubscribed(POST_MODEL_CHANGE, this))
             outTrChannel->subscribe(POST_MODEL_CHANGE, this);
     }
-
-    if (!errorWhenAsymmetric && dataratesDiffer && datarate == 0.0)
-        throw cRuntimeError("The datarate unspecified");
 }
 
 void EtherHub::receiveSignal(cComponent *source, simsignal_t signalID, cObject *obj, cObject *details)
