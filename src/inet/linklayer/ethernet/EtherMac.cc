@@ -283,9 +283,6 @@ void EtherMac::processSignalFromNetwork(EthernetSignalBase *signal)
         return;
     }
 
-    if (signal->getBitrate() != curEtherDescr->txrate)
-        throw cRuntimeError("Ethernet misconfiguration: bitrate in module and on the signal must be same.");
-
     // detect cable length violation in half-duplex mode
     if (!duplexMode) {
         simtime_t propagationTime = simTime() - signal->getSendingTime();
