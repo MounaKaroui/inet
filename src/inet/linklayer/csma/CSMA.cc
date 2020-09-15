@@ -68,7 +68,6 @@ void CSMA::initialize(int stage)
         bitrate = par("bitrate");
         ackLength = par("ackLength");
         ackMessage = nullptr;
-
         //init parameters for backoff method
         std::string backoffMethodStr = par("backoffMethod").stdstringValue();
         if (backoffMethodStr == "exponential") {
@@ -91,7 +90,6 @@ void CSMA::initialize(int stage)
             initialCW = par("contentionWindow");
         }
         NB = 0;
-
         // initialize the timers
         backoffTimer = new cMessage("timer-backoff");
         ccaTimer = new cMessage("timer-cca");
@@ -99,10 +97,7 @@ void CSMA::initialize(int stage)
         rxAckTimer = new cMessage("timer-rxAck");
         macState = IDLE_1;
         txAttempts = 0;
-
         initializeMACAddress();
-        registerInterface();
-
         cModule *radioModule = getModuleFromPar<cModule>(par("radioModule"), this);
         radioModule->subscribe(IRadio::radioModeChangedSignal, this);
         radioModule->subscribe(IRadio::transmissionStateChangedSignal, this);
@@ -126,8 +121,8 @@ void CSMA::initialize(int stage)
         EV_DETAIL << "queueLength = " << queueLength
                   << " bitrate = " << bitrate
                   << " backoff method = " << par("backoffMethod").stringValue() << endl;
-
         EV_DETAIL << "finished csma init stage 1." << endl;
+        registerInterface(); // moved here to initialize interfaces at the same stage
     }
 }
 
