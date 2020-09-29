@@ -388,6 +388,7 @@ void Radio::endTransmission()
     EV_INFO << "Transmission ended: " << (IRadioFrame *)radioFrame << " " << IRadioSignal::getSignalPartName(part) << " as " << transmission << endl;
     updateTransceiverState();
     updateTransceiverPart();
+    emit (LayeredProtocolBase::packetSentToLowerSignal,radioFrame);
     check_and_cast<RadioMedium *>(medium)->emit(IRadioMedium::transmissionEndedSignal, check_and_cast<const cObject *>(transmission));
 }
 
