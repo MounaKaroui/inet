@@ -29,6 +29,8 @@ namespace ieee80211 {
 
 Define_Module(Hcf);
 
+simsignal_t Hcf::bufferVacancySignal=registerSignal("bufferVacancySignal");
+
 void Hcf::initialize(int stage)
 {
     ModeSetListener::initialize(stage);
@@ -124,6 +126,9 @@ void Hcf::processUpperFrame(Ieee80211DataOrMgmtFrame* frame)
         emit(NF_PACKET_DROP, frame);
         delete frame;
     }
+
+    double queueVacancy=(edcaPendingQueues[ac]->getMaxQueueSize()-edcaPendingQueues[ac]->getLength());
+   // TODO emit the signal
 }
 
 void Hcf::scheduleStartRxTimer(simtime_t timeout)

@@ -49,7 +49,8 @@ module Dcf
         @display("i=block/queue");
         @signal[NF_LINK_BREAK](type=inet::ieee80211::Ieee80211DataOrMgmtFrame);
         @signal[NF_PACKET_DROP](type=inet::ieee80211::Ieee80211Frame);
-
+		@signal[bufferVacancySignal]; 
+		
     submodules:
         channelAccess: Dcaf {
             parameters:

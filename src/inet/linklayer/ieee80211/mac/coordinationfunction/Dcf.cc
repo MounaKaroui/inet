@@ -88,6 +88,7 @@ void Dcf::processUpperFrame(Ieee80211DataOrMgmtFrame* frame)
         emit(NF_PACKET_DROP, frame);
         delete frame;
     }
+
 }
 
 void Dcf::transmitControlResponseFrame(Ieee80211Frame* responseFrame, Ieee80211Frame* receivedFrame)

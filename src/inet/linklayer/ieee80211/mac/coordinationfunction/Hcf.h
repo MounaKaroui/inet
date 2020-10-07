@@ -59,6 +59,7 @@ class Ieee80211Mac;
  */
 class INET_API Hcf : public ICoordinationFunction, public IFrameSequenceHandler::ICallback, public IChannelAccess::ICallback, public ITx::ICallback, public IProcedureCallback, public IBlockAckAgreementHandlerCallback, public ModeSetListener
 {
+
     protected:
         Ieee80211Mac *mac = nullptr;
         IRateControl *dataAndMgmtRateControl = nullptr;
@@ -179,6 +180,8 @@ class INET_API Hcf : public ICoordinationFunction, public IFrameSequenceHandler:
         virtual void scheduleInactivityTimer(simtime_t timeout) override;
 
     public:
+
+        static simsignal_t bufferVacancySignal;
         virtual ~Hcf();
 
         // ICoordinationFunction
