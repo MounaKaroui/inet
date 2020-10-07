@@ -556,6 +556,18 @@ bool Radio::isListeningPossible() const
     return isListeningPossible;
 }
 
+IRadio::ReceptionState Radio::getReceptionState(const simtime_t startTime, const simtime_t endTime) const{
+    const Coord position = antenna->getMobility()->getCurrentPosition(); //KLUDGE: why this coordinate ? How about if the network node is mobile.
+    const IListening *listening = receiver->createListening(this, startTime, endTime, position, position);
+    const IListeningDecision *listeningDecision = medium->listenOnMedium(this, listening);
+    bool isListeningPossible = listeningDecision->isListeningPossible();
+    delete listening;
+    delete listeningDecision;
+    return isListeningPossible ? RECEPTION_STATE_BUSY : RECEPTION_STATE_IDLE ;
+}
+
+
+
 void Radio::updateTransceiverState()
 {
     // reception state

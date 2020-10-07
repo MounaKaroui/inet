@@ -223,6 +223,7 @@ class INET_API IRadio : public IPhysicalLayer, public IPrintableObject
      */
     virtual ReceptionState getReceptionState() const = 0;
 
+    virtual ReceptionState getReceptionState(const simtime_t startTime, const simtime_t endTime) const = 0;
     /**
      * Returns the current radio transmission state. This is the same state as
      * the one emitted with the last transmissionStateChangedSignal.

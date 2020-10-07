@@ -378,7 +378,8 @@ void CSMA::updateStatusCCA(t_mac_event event, cMessage *msg)
     switch (event) {
         case EV_TIMER_CCA: {
             EV_DETAIL << "(25) FSM State CCA_3, EV_TIMER_CCA" << endl;
-            bool isIdle = radio->getReceptionState() == IRadio::RECEPTION_STATE_IDLE;
+            simtime_t now = simTime();
+            bool isIdle = radio->getReceptionState(now-ccaDetectionTime,now) == IRadio::RECEPTION_STATE_IDLE;
             if (isIdle) {
                 EV_DETAIL << "(3) FSM State CCA_3, EV_TIMER_CCA, [Channel Idle]: -> TRANSMITFRAME_4." << endl;
                 updateMacState(TRANSMITFRAME_4);

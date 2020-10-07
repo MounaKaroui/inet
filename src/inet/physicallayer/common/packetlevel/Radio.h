@@ -236,6 +236,7 @@ class INET_API Radio : public PhysicalLayerBase, public virtual IRadio
     virtual void setRadioMode(RadioMode newRadioMode) override;
 
     virtual ReceptionState getReceptionState() const override { return receptionState; }
+    virtual ReceptionState getReceptionState(const simtime_t startTime, const simtime_t endTime) const override;
     virtual TransmissionState getTransmissionState() const override { return transmissionState; }
 
     virtual const ITransmission *getTransmissionInProgress() const override;
