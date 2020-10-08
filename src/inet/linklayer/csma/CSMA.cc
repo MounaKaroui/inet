@@ -36,7 +36,6 @@
 #include "inet/common/FindModule.h"
 #include "inet/linklayer/common/SimpleLinkLayerControlInfo.h"
 #include "inet/linklayer/csma/CSMAFrame_m.h"
-#include "inet/linklayer/ieee80211/mac/QueueVacancyIndication_m.h"
 
 
 namespace inet {

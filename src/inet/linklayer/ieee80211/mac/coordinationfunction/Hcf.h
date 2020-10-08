@@ -48,7 +48,6 @@
 #include "inet/linklayer/ieee80211/mac/protectionmechanism/SingleProtectionMechanism.h"
 #include "inet/linklayer/ieee80211/mac/queue/InProgressFrames.h"
 #include "inet/linklayer/ieee80211/mac/recipient/CtsProcedure.h"
-#include "inet/linklayer/ieee80211/mac/QueueVacancyIndication_m.h"
 
 namespace inet {
 namespace ieee80211 {

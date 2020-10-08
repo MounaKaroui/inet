@@ -39,7 +39,6 @@
 #include "inet/linklayer/ieee80211/mac/originator/NonQoSRecoveryProcedure.h"
 #include "inet/linklayer/ieee80211/mac/protectionmechanism/OriginatorProtectionMechanism.h"
 #include "inet/linklayer/ieee80211/mac/queue/InProgressFrames.h"
-#include "inet/linklayer/ieee80211/mac/QueueVacancyIndication_m.h"
 
 namespace inet {
 namespace ieee80211 {
