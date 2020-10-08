@@ -27,6 +27,8 @@ namespace ieee80211 {
 
 Define_Module(Dcf);
 
+simsignal_t Dcf::queueVacancySignal=registerSignal("queueVacancySignal");
+
 void Dcf::initialize(int stage)
 {
     ModeSetListener::initialize(stage);
@@ -88,6 +90,11 @@ void Dcf::processUpperFrame(Ieee80211DataOrMgmtFrame* frame)
         emit(NF_PACKET_DROP, frame);
         delete frame;
     }
+
+    double queueVacancy=(pendingQueue->getMaxQueueSize()-pendingQueue->getLength());
+    QueueVacancyIndication* queueVacancyMsg=new QueueVacancyIndication("QueueVacancyIndication");
+    queueVacancyMsg->setValue(queueVacancy);
+    emit(queueVacancySignal,queueVacancyMsg);
 
 }
 

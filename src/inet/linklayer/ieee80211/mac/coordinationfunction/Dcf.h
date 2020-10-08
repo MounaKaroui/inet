@@ -39,6 +39,7 @@
 #include "inet/linklayer/ieee80211/mac/originator/NonQoSRecoveryProcedure.h"
 #include "inet/linklayer/ieee80211/mac/protectionmechanism/OriginatorProtectionMechanism.h"
 #include "inet/linklayer/ieee80211/mac/queue/InProgressFrames.h"
+#include "inet/linklayer/ieee80211/mac/QueueVacancyIndication_m.h"
 
 namespace inet {
 namespace ieee80211 {
@@ -137,7 +138,7 @@ class INET_API Dcf : public ICoordinationFunction, public IFrameSequenceHandler:
 
     public:
         virtual ~Dcf();
-
+        static simsignal_t queueVacancySignal;
         // ICoordinationFunction
         virtual void processUpperFrame(Ieee80211DataOrMgmtFrame *frame) override;
         virtual void processLowerFrame(Ieee80211Frame *frame) override;
