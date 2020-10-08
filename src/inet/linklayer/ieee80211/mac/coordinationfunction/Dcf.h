@@ -88,8 +88,7 @@ class INET_API Dcf : public ICoordinationFunction, public IFrameSequenceHandler:
         // Protection mechanism
         OriginatorProtectionMechanism *originatorProtectionMechanism = nullptr;
 
-        // Queue
-        PendingQueue *pendingQueue = nullptr;
+
         InProgressFrames *inProgressFrames = nullptr;
 
         // Frame sequence handler
@@ -138,8 +137,10 @@ class INET_API Dcf : public ICoordinationFunction, public IFrameSequenceHandler:
 
     public:
         virtual ~Dcf();
-        static simsignal_t queueVacancySignal;
         // ICoordinationFunction
+        // Queue
+        PendingQueue *pendingQueue = nullptr;
+
         virtual void processUpperFrame(Ieee80211DataOrMgmtFrame *frame) override;
         virtual void processLowerFrame(Ieee80211Frame *frame) override;
         virtual void corruptedFrameReceived() override;

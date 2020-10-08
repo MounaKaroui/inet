@@ -51,7 +51,7 @@ using namespace physicallayer;
 class INET_API CSMA : public MACProtocolBase, public IMACProtocol
 {
   public:
-    static simsignal_t queueVacancyCSMASignal;
+
     CSMA()
         : MACProtocolBase()
         , nbTxFrames(0)
@@ -115,7 +115,9 @@ class INET_API CSMA : public MACProtocolBase, public IMACProtocol
     /** @brief Handle control messages from lower layer */
     virtual void receiveSignal(cComponent *source, simsignal_t signalID, long value, cObject *details) override;
 
-  protected:
+
+
+   //protected:
     typedef std::list<CSMAFrame *> MacQueue;
 
     /** @name Different tracked statistics.*/

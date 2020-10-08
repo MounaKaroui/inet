@@ -43,7 +43,6 @@ namespace inet {
 
 Define_Module(CSMA);
 
-simsignal_t  CSMA::queueVacancyCSMASignal=registerSignal("queueVacancyCSMASignal");
 
 void CSMA::initialize(int stage)
 {
@@ -161,6 +160,8 @@ CSMA::~CSMA()
         delete (elem);
     }
 }
+
+
 
 void CSMA::initializeMACAddress()
 {
@@ -696,12 +697,12 @@ void CSMA::executeMac(t_mac_event event, cMessage *msg)
         }
     }
 
-    // Adding queue vacancy metric:
-    using namespace ieee80211;
-    QueueVacancyIndication*  queueVacancyMsg=new QueueVacancyIndication("QueueVacancyIndication");
-    double queueVacancy=macQueue.size() - queueLength;
-    queueVacancyMsg->setValue(queueVacancy);
-    emit(queueVacancyCSMASignal,queueVacancy);
+//    // Adding queue vacancy metric:
+//    using namespace ieee80211;
+////    QueueVacancyIndication*  queueVacancyMsg=new QueueVacancyIndication("QueueVacancyIndication");
+////    double queueVacancy=macQueue.size() - queueLength;
+////    queueVacancyMsg->setValue(queueVacancy);
+////    emit(queueVacancyCSMASignal,queueVacancy);
 }
 
 void CSMA::manageQueue()

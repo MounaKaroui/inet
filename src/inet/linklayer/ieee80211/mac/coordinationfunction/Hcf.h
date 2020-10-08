@@ -182,7 +182,6 @@ class INET_API Hcf : public ICoordinationFunction, public IFrameSequenceHandler:
 
     public:
 
-        static simsignal_t queueVacancySignal;
         virtual ~Hcf();
 
         // ICoordinationFunction

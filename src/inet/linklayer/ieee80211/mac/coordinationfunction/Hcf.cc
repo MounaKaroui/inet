@@ -29,8 +29,6 @@ namespace ieee80211 {
 
 Define_Module(Hcf);
 
-simsignal_t Hcf::queueVacancySignal=registerSignal("queueVacancySignal");
-
 void Hcf::initialize(int stage)
 {
     ModeSetListener::initialize(stage);
@@ -94,6 +92,8 @@ void Hcf::handleMessage(cMessage* msg)
         throw cRuntimeError("Unknown msg type");
 }
 
+
+
 void Hcf::processUpperFrame(Ieee80211DataOrMgmtFrame* frame)
 {
     Enter_Method("processUpperFrame(%s)", frame->getName());
@@ -126,12 +126,6 @@ void Hcf::processUpperFrame(Ieee80211DataOrMgmtFrame* frame)
         emit(NF_PACKET_DROP, frame);
         delete frame;
     }
-
-    double queueVacancy=(edcaPendingQueues[ac]->getMaxQueueSize()-edcaPendingQueues[ac]->getLength());
-    QueueVacancyIndication* queueVacancyMsg=new QueueVacancyIndication("QueueVacancyIndication");
-    queueVacancyMsg->setValue(queueVacancy);
-    emit(queueVacancySignal,queueVacancyMsg);
-
 }
 
 void Hcf::scheduleStartRxTimer(simtime_t timeout)
