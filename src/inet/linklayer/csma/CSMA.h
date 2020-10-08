@@ -51,6 +51,7 @@ using namespace physicallayer;
 class INET_API CSMA : public MACProtocolBase, public IMACProtocol
 {
   public:
+    static simsignal_t queueVacancyCSMASignal;
     CSMA()
         : MACProtocolBase()
         , nbTxFrames(0)

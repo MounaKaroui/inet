@@ -94,4 +94,5 @@ simple CSMA extends MACProtocolBase like IMACProtocol
 
         @class(CSMA);
         @signal[NF_LINK_BREAK](type=inet::CSMAFrame);
+        @signal[queueVacancyCSMASignal];
 }

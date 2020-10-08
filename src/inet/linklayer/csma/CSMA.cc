@@ -36,10 +36,14 @@
 #include "inet/common/FindModule.h"
 #include "inet/linklayer/common/SimpleLinkLayerControlInfo.h"
 #include "inet/linklayer/csma/CSMAFrame_m.h"
+#include "inet/linklayer/ieee80211/mac/QueueVacancyIndication_m.h"
+
 
 namespace inet {
 
 Define_Module(CSMA);
+
+simsignal_t  CSMA::queueVacancyCSMASignal=registerSignal("queueVacancyCSMASignal");
 
 void CSMA::initialize(int stage)
 {
@@ -691,6 +695,13 @@ void CSMA::executeMac(t_mac_event event, cMessage *msg)
                 break;
         }
     }
+
+    // Adding queue vacancy metric:
+    using namespace ieee80211;
+    QueueVacancyIndication*  queueVacancyMsg=new QueueVacancyIndication("QueueVacancyIndication");
+    double queueVacancy=macQueue.size() - queueLength;
+    queueVacancyMsg->setValue(queueVacancy);
+    emit(queueVacancyCSMASignal,queueVacancy);
 }
 
 void CSMA::manageQueue()
