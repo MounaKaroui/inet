@@ -44,6 +44,8 @@ void Rx::initialize(int stage)
         WATCH(receptionState);
         WATCH(transmissionState);
         WATCH(mediumFree);
+        droppedPackets =registerSignal("droppedPackets");
+
     }
     else if (stage == INITSTAGE_LINK_LAYER) {
         // statistics = check_and_cast<IStatistics *>(getModuleByPath(par("statisticsModule")));
@@ -77,7 +79,10 @@ bool Rx::lowerFrameReceived(Ieee80211Frame *frame)
     }
     else {
         EV_INFO << "Received an erroneous frame from PHY, dropping it." << std::endl;
+        emit(droppedPackets, frame);
         delete frame;
+
+
         for (auto contention : contentions)
             contention->corruptedFrameReceived();
 //        statistics->erroneousFrameReceived();

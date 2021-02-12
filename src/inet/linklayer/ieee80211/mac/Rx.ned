@@ -28,4 +28,8 @@ simple Rx like IRx
     parameters:
         string statisticsModule = default(""); // TODO
         @display("i=block/rx");
+        
+        @signal[droppedPackets];
+        @statistic[droppedPkt](source=droppedPackets; record=count,"sum(packetBytes)","vector(packetBytes)"; interpolationmode=none);
+        
 }

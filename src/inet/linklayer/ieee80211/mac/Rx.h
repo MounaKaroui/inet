@@ -37,7 +37,6 @@ class INET_API Rx : public cSimpleModule, public IRx
     protected:
         std::vector<IContention *> contentions;
         IStatistics *statistics = nullptr;
-
         MACAddress address;
         cMessage *endNavTimer = nullptr;
         IRadio::ReceptionState receptionState = IRadio::RECEPTION_STATE_UNDEFINED;
@@ -45,6 +44,9 @@ class INET_API Rx : public cSimpleModule, public IRx
         IRadioSignal::SignalPart receivedPart = IRadioSignal::SIGNAL_PART_NONE;
         bool mediumFree = true;  // cached state
 
+        double dropped=0;
+        //cOutVector vecDropped;
+        simsignal_t droppedPackets;
     protected:
         virtual int numInitStages() const override { return NUM_INIT_STAGES; }
         virtual void initialize(int stage) override;
